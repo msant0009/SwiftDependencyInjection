@@ -6,6 +6,26 @@
 //
 
 import UIKit
+import Swinject
+
+// Swinject
+let container : Container = {
+    let container = Container()
+    container.register(BackgroundProvidingClass.self) { resolver in
+        return BackgroundProvidingClass()
+        
+    }
+    
+    container.register(AnotherVC.self) { resolver in
+        let vc = AnotherVC(providerProtocol: resolver.resolve(BackgroundProvidingClass.self))
+        return vc
+        
+    }
+    
+    return container
+}()
+
+
 
 class ViewController: UIViewController {
 
@@ -23,7 +43,9 @@ class ViewController: UIViewController {
 
     
     @objc private func buttonClicked() {
-        
+        if let viewController = container.resolve(AnotherVC.self) {
+            present(viewController, animated: true)
+        }
     }
 
 }
